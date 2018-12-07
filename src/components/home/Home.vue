@@ -24,15 +24,15 @@ export default {
         }
     },
     methods: {
-        getImg() {
+        getStories() {
             this.$axios.get("/api/news/latest")
-            .then(this.getImgSucc)
+            .then(this.getStoriesSucc)
             .catch(error => {
                 console.log(error);
             })
         },
-        getImgSucc(res) {
-            if (res.data) {
+        getStoriesSucc(res) {
+            if (res.status == 200 && res.data) {
                 res = res.data;
                 this.top_stories = res.top_stories;
                 this.stories = res.stories;
@@ -40,7 +40,7 @@ export default {
         }
     },
     mounted() {
-        this.getImg();
+        this.getStories();
     }
 }
 </script>

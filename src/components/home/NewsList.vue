@@ -2,12 +2,12 @@
     <div class="wrapper">
         <div class="list-title">今日新闻</div>
         <div class="list-item">
-            <div class="new-content" v-for="obj of stories" :key="obj.id">
+            <router-link tag="div" :to="/detail/ + obj.id" class="new-content" v-for="obj of stories" :key="obj.id">
                 <p class="new-title">{{ obj.title }}</p>
                 <div class="new-img">
                     <img class="img" :src="obj.images[0]" alt="">
                 </div>
-            </div>
+            </router-link>
         </div>
         
     </div>

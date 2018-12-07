@@ -2,8 +2,10 @@
     <div class="wrapper">
         <swiper :options="swiperOption">
             <swiper-slide v-for="obj in top_stories" :key="obj.id">
-                <img class="swiper-img" :src="obj.image">
-                <p class="img-info">{{ obj.title }}</p>
+                <router-link tag="div" :to="/detail/ + obj.id">
+                    <img class="swiper-img" :src="obj.image">
+                    <p class="img-info">{{ obj.title }}</p>
+                </router-link>
             </swiper-slide>
             <div class="swiper-pagination"  slot="pagination"></div>
         </swiper>
@@ -51,7 +53,6 @@ export default {
         width: 100%
         height: 5rem
         .swiper-img
-            
             width: 100%
             height: 100%
         .img-info
