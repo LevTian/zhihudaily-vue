@@ -60,7 +60,7 @@ export default {
             left: 0
             right: 0
             bottom: .5rem
-            margin: 0 .4rem
+            margin: 0 .4rem !important
             color: #ffffff
             font-size: .32rem
 

@@ -31,15 +31,16 @@ export default {
             left: 0
             right: 0
             bottom: .5rem
-            margin: 0 .4rem
+            margin: 0 .4rem !important
             color: #ffffff
             font-size: .32rem
             text-align: left 
+            line-height: .4rem
         .img-source
             position: absolute
             right: 0
             bottom: .2rem
-            margin-right: .2rem
+            margin: 0 .2rem 0 0 !important
             font-size: .16rem
             color: #cccccc
 </style>

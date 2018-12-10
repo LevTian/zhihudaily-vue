@@ -55,6 +55,7 @@ export default {
                     text-align: left
                     line-height: .45rem
                     font-size: .34rem
+                    margin: 0 !important
                 .new-img
                     float: right 
                     width: 1.6rem

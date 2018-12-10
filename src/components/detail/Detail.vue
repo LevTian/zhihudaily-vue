@@ -2,7 +2,7 @@
     <div>
         <DetailHeader :comments="comments" :star="star" :share="share"></DetailHeader>
         <DetailImage :image="image" :title="title" :img_source="img_source"></DetailImage>
-        <DetailContent :body="body" :css="css"></DetailContent>
+        <DetailContent :body="body"></DetailContent>
     </div>
 </template>
 
@@ -29,7 +29,6 @@ export default {
             img_source: "",
             share: "",
             body: "",
-            css: "",
         }
     },
     methods: {
@@ -47,7 +46,6 @@ export default {
                 this.img_source = res.image_source;
                 this.share = res.share_url;
                 this.body = res.body;
-                this.css = res.css[0];
             }
         },
         getNewExtra() {
