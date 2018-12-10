@@ -15,6 +15,5 @@ export default {
 
 <style lang="stylus" scoped>
     @import "../../../public/new-detail.css"
-    p
-      color: red
+    
 </style>

@@ -27,8 +27,14 @@ export default {
 <style lang="stylus" scoped>
     .header
         display: flex
+        z-index: 10
+        position: fixed
+        top: 0
+        left: 0
+        right: 0
         height: .86rem
         line-height : .86rem
+        margin-top: .86rem
         color: #ffffff
         background: #0099CC
         .back-icon

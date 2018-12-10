@@ -9,12 +9,6 @@
             </swiper-slide>
             <div class="swiper-pagination"  slot="pagination"></div>
         </swiper>
-        <!-- <swiper :options="swiperOption">
-            <swiper-slide v-for="item in top_stories" :key="item.id">
-                <img class="swiper-img" :src="item.image" />
-            </swiper-slide>
-            <div class="swiper-pagination"  slot="pagination"></div>
-        </swiper> -->
     </div>
 </template>
 
