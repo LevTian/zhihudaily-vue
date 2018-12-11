@@ -34,7 +34,7 @@ export default {
         right: 0
         height: .86rem
         line-height : .86rem
-        margin-top: .86rem
+        
         color: #ffffff
         background: #0099CC
         .back-icon

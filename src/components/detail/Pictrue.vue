@@ -23,6 +23,7 @@ export default {
         overflow: hidden
         width: 100%
         height: 4.5rem
+        margin-top: .86rem
         .swiper-img
             width: 100%
             height: 100%
