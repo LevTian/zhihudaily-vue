@@ -30,7 +30,7 @@ export default {
     data() {
         return {
             top_stories: [],
-            stories: {},
+            stories: [],
             title: "首页",
             pulldownMsg: "下拉刷新",
             tartY: 0,
@@ -55,8 +55,8 @@ export default {
                 res = res.data;
                 this.top_stories = res.top_stories;
                 // this.stories["today"] = res.stories;
-                this.$set(this.stories, "today", res.stories);
-                
+                // this.$set(this.stories, "today", res.stories);
+                this.stories.push(res);
             }  
         },
         forTwo(num) {
@@ -66,8 +66,8 @@ export default {
             if (res.status == 200 && res.data) {
                 res = res.data;
                 // this.stories[res.date] = res.stories;
-                this.$set(this.stories, res.date, res.stories);
-                console.log(this.stories);
+                // this.$set(this.stories, res.date, res.stories);
+                this.stories.push(res);     //需要用push不能直接用数组下标，vue无法监测到数组的变化
             } 
         },
         loadMore() {

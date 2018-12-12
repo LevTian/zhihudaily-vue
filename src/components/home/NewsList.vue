@@ -2,9 +2,9 @@
     <div class="wrapper">
         
         <div class="list-item">
-            <div v-for="(value, key) of stories" :key="key">
-                <div class="list-title">{{ key }}</div>
-                <router-link tag="div" :to="/detail/ + obj.id" class="new-content" v-for="obj of stories[key]" :key="obj.id">
+            <div v-for="(items, index) of stories" :key="index">
+                <div class="list-title">{{ items.date }}</div>
+                <router-link tag="div" :to="/detail/ + obj.id" class="new-content" v-for="obj of items.stories" :key="obj.id">
                     <p class="new-title">{{ obj.title }}</p>
                     <div class="new-img">
                         <img class="img" :src="obj.images[0]" alt="">
@@ -26,7 +26,7 @@ export default {
         }
     },
     props: {
-        stories: Object
+        stories: Array
     } 
 }
 </script>
