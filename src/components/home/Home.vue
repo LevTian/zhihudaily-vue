@@ -9,7 +9,7 @@
                 <p class="top-tip" v-show="notesShow">松开刷新</p>
                 <HomeSwiper :top_stories="top_stories"></HomeSwiper>
                 <HomeNewsList :stories="stories"></HomeNewsList>
-                <p class="tottom-tip">加载更多</p>
+                <div class="load iconfont" @click="loadMore">&#xe69c;</div>
             <!-- </div> -->
         </div>
     </div>
@@ -30,7 +30,7 @@ export default {
     data() {
         return {
             top_stories: [],
-            stories: [],
+            stories: {},
             title: "首页",
             pulldownMsg: "下拉刷新",
             tartY: 0,
@@ -38,12 +38,12 @@ export default {
             top: 0,
             state: 0,
             notesShow: false,
+            toDate: null,
 
         }
     },
     methods: {
         getStories() {
-            console.log("axios");
             this.$axios.get("/api/news/latest")
             .then(this.getStoriesSucc)
             .catch(error => {
@@ -54,8 +54,37 @@ export default {
             if (res.status == 200 && res.data) {
                 res = res.data;
                 this.top_stories = res.top_stories;
-                this.stories = res.stories;
+                // this.stories["today"] = res.stories;
+                this.$set(this.stories, "today", res.stories);
+                
             }  
+        },
+        forTwo(num) {
+            return num > 9 ? num : "0" + num;
+        },
+        loadMoreSucc(res) {
+            if (res.status == 200 && res.data) {
+                res = res.data;
+                // this.stories[res.date] = res.stories;
+                this.$set(this.stories, res.date, res.stories);
+                console.log(this.stories);
+            } 
+        },
+        loadMore() {
+            // this.toDate = this.toDate - 24*60*60*1000;
+            // this.toDate = this.toDate.getDate() - 1;
+            this.toDate.setDate(this.toDate.getDate() - 1);
+            var to = new Date(this.toDate);
+            var year = to.getFullYear();
+            var month = this.forTwo(to.getMonth() + 1);  //月份从0开始计数
+            var day = this.forTwo(to.getDay());
+            var str = year + "" + month + "" + day;
+            console.log(this.toDate, str);
+            this.$axios.get("/api/news/before/" + str)
+            .then(this.loadMoreSucc)
+            .catch(error => {
+                console.log(error);
+            })
         },
         handleTouchStart(e) {
             this.startY = e.targetTouches[0].pageY;
@@ -64,7 +93,7 @@ export default {
         handleTouchMove(e) {
             if (!this.touching) return;
             let diff = e.targetTouches[0].pageY - this.startY; 
-            this.top = Math.floor(diff*0.5) + (this.state === 2 ? 40 : 0);
+            this.top = Math.floor(Math.abs(diff)*0.5) + (this.state === 2 ? 40 : 0);
             if (this.top >= 40) {
                 this.state = 1;   //代表正在拉取
             } else {
@@ -94,10 +123,6 @@ export default {
             this.notesShow = false;
         }
     },
-    mounted() {
-        this.getStories();
-        
-    },
     watch: {
         top: function(val) {
             this.transform = "transform:translateY(" + val + "px)";
@@ -106,6 +131,11 @@ export default {
             }
         },
     },
+    mounted() {
+        this.getStories();
+        this.toDate = new Date();
+    },
+    
     // created(){
     //     const that = this;
     //     this.$nextTick(() => {
@@ -164,4 +194,16 @@ export default {
         line-height: .86rem
         text-align: center
         margin: 0 !important
+    .load
+        position: fixed
+        bottom: .2rem
+        right: .2rem
+        font-size: .6rem
+        width: .8rem
+        height: .8rem
+        line-height: .8rem
+        text-align: center
+        border-radius: .8rem
+        color: #ffffff
+        background: rgba(204, 204, 204, .8)
 </style>

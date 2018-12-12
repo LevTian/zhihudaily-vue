@@ -1,13 +1,16 @@
 <template>
     <div class="wrapper">
-        <div class="list-title">今日新闻</div>
+        
         <div class="list-item">
-            <router-link tag="div" :to="/detail/ + obj.id" class="new-content" v-for="obj of stories" :key="obj.id">
-                <p class="new-title">{{ obj.title }}</p>
-                <div class="new-img">
-                    <img class="img" :src="obj.images[0]" alt="">
-                </div>
-            </router-link>
+            <div v-for="(value, key) of stories" :key="key">
+                <div class="list-title">{{ key }}</div>
+                <router-link tag="div" :to="/detail/ + obj.id" class="new-content" v-for="obj of stories[key]" :key="obj.id">
+                    <p class="new-title">{{ obj.title }}</p>
+                    <div class="new-img">
+                        <img class="img" :src="obj.images[0]" alt="">
+                    </div>
+                </router-link>
+            </div>
         </div>
         
     </div>
@@ -23,7 +26,7 @@ export default {
         }
     },
     props: {
-        stories: Array
+        stories: Object
     } 
 }
 </script>
