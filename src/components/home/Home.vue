@@ -71,15 +71,17 @@ export default {
             } 
         },
         loadMore() {
-            // this.toDate = this.toDate - 24*60*60*1000;
+            // this.toDate = this.toDate.getTime() - 24*60*60*1000;     //第二次是毫秒值无法使用getTime
             // this.toDate = this.toDate.getDate() - 1;
-            this.toDate.setDate(this.toDate.getDate() - 1);
-            var to = new Date(this.toDate);
+            // this.toDate.setDate(this.toDate.getDate() - 1);
+            this.toDate = this.toDate - 24*60*60*1000;
+            var to = new Date();
+            to.setTime(this.toDate);
             var year = to.getFullYear();
             var month = this.forTwo(to.getMonth() + 1);  //月份从0开始计数
-            var day = this.forTwo(to.getDay());
+            // var day = this.forTwo(to.getDay());      //  getDay是星期
+            var day = this.forTwo(to.getDate());
             var str = year + "" + month + "" + day;
-            console.log(this.toDate, str);
             this.$axios.get("/api/news/before/" + str)
             .then(this.loadMoreSucc)
             .catch(error => {
