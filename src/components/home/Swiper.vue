@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <swiper :options="swiperOption">
+        <swiper :options="swiperOption" v-if="swiperShow">
             <swiper-slide v-for="obj in top_stories" :key="obj.id">
                 <router-link tag="div" :to="/detail/ + obj.id">
                     <img class="swiper-img" :src="obj.image">
@@ -28,7 +28,12 @@ export default {
     },
     props: {
         top_stories: Array,
-    } 
+    },
+    computed: {
+        swiperShow() {      //有数据才显示，不然会出现起始位置在最后一个
+            return this.top_stories.length;
+        }
+    }
 }
 </script>
 
