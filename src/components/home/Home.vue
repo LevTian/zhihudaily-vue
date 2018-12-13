@@ -4,7 +4,8 @@
         <div class="box" ref="wrapper"
         @touchstart="handleTouchStart"
         @touchmove="handleTouchMove"
-        @touchend="handleTouchEnd">
+        @touchend="handleTouchEnd"
+        @scroll.native="handleScroll">
             <!-- <div class="bscroll-container"> -->
                 <p class="top-tip" v-show="notesShow">松开刷新</p>
                 <HomeSwiper :top_stories="top_stories"></HomeSwiper>
@@ -56,7 +57,12 @@ export default {
                 this.top_stories = res.top_stories;
                 // this.stories["today"] = res.stories;
                 // this.$set(this.stories, "today", res.stories);
-                this.stories.push(res);
+                if (this.stories) {     //如果有值替换第一个值splice(0, 1, res)，第一个参数删除的起始位置
+                    this.stories.splice(0, 1, res);        //第二个参数，删除的个数，第三个插入的值
+                } else {
+                    this.stories.push(res);
+                }
+                
             }  
         },
         forTwo(num) {
@@ -71,22 +77,24 @@ export default {
             } 
         },
         loadMore() {
-            // this.toDate = this.toDate.getTime() - 24*60*60*1000;     //第二次是毫秒值无法使用getTime
-            // this.toDate = this.toDate.getDate() - 1;
-            // this.toDate.setDate(this.toDate.getDate() - 1);
-            this.toDate = this.toDate - 24*60*60*1000;
-            var to = new Date();
-            to.setTime(this.toDate);
-            var year = to.getFullYear();
-            var month = this.forTwo(to.getMonth() + 1);  //月份从0开始计数
+            var year = this.toDate.getFullYear();
+            var month = this.toDate.getMonth() + 1;  //月份从0开始计数
             // var day = this.forTwo(to.getDay());      //  getDay是星期
-            var day = this.forTwo(to.getDate());
-            var str = year + "" + month + "" + day;
+            var day = this.toDate.getDate();
+            var str = year + "" + this.forTwo(month) + "" + this.forTwo(day);
             this.$axios.get("/api/news/before/" + str)
             .then(this.loadMoreSucc)
             .catch(error => {
                 console.log(error);
             })
+            // this.toDate = this.toDate.getTime() - 24*60*60*1000;     //第二次是毫秒值无法使用getTime
+            // this.toDate = this.toDate.getDate() - 1;
+            // this.toDate.setDate(this.toDate.getDate() - 1);
+            this.toDate = this.toDate - 24*60*60*1000;      //由于api是获取前一天的消息，所以先使用了再减一
+            this.toDate = new Date(this.toDate);
+            // var to = new Date();
+            // to.setTime(this.toDate);
+            
         },
         handleTouchStart(e) {
             this.startY = e.targetTouches[0].pageY;
@@ -95,6 +103,7 @@ export default {
         handleTouchMove(e) {
             if (!this.touching) return;
             let diff = e.targetTouches[0].pageY - this.startY; 
+            if (diff < 0) return;   //下滑不做判断
             this.top = Math.floor(Math.abs(diff)*0.5) + (this.state === 2 ? 40 : 0);
             if (this.top >= 40) {
                 this.state = 1;   //代表正在拉取
@@ -116,6 +125,12 @@ export default {
 　　　　　　　　this.top = 0;
 　　　　　　}
         },
+        handleScroll(e) {
+            console.log("scroll")
+            for (item in e) {
+                console.log(item, e.item)
+            }
+        },
         refresh() {
             this.state = 2;
             this.top = 40;
@@ -136,6 +151,7 @@ export default {
     mounted() {
         this.getStories();
         this.toDate = new Date();
+        this.$refs.wrapper.addEventListener("scroll", this.handleScroll, false);
     },
     
     // created(){

@@ -3,7 +3,7 @@
         
         <div class="list-item">
             <div v-for="(items, index) of stories" :key="index">
-                <div class="list-title">{{ items.date }}</div>
+                <div class="list-title" :id="items.date">{{ items.date }}</div>
                 <router-link tag="div" :to="/detail/ + obj.id" class="new-content" v-for="obj of items.stories" :key="obj.id">
                     <p class="new-title">{{ obj.title }}</p>
                     <div class="new-img">

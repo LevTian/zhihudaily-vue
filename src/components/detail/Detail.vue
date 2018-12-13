@@ -40,7 +40,6 @@ export default {
         getNewSucc(res) {
             if (res.status ==200 && res.data) {
                 res = res.data;
-                console.log(res);
                 this.image = res.image;
                 this.title = res.title;
                 this.img_source = res.image_source;

@@ -19,7 +19,6 @@ export default {
         share: String,
     },
     mounted() {
-        console.log(this.comments, this.star)
     }
 }
 </script>
