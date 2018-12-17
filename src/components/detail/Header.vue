@@ -44,7 +44,7 @@ export default {
         .header-right
             flex: 1
             display: flex
-            margin-left: 2rem
+            margin-left: 1.5rem
             .share-icon
                 flex: 1
                 font-size: .48rem
@@ -52,9 +52,9 @@ export default {
                 flex: 1
                 font-size: .48rem
             .comment-icon
-                flex: 1
+                flex: 2
                 font-size: .48rem
             .praise-icon
-                flex: 1
+                flex: 2
                 font-size: .48rem
 </style>

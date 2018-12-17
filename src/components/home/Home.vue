@@ -125,12 +125,14 @@ export default {
 　　　　　　　　this.top = 0;
 　　　　　　}
         },
-        handleScroll(e) {
-            console.log("scroll")
-            for (item in e) {
-                console.log(item, e.item)
-            }
-        },
+        // handleScroll(e) {
+        //     // var scrollBox = this.$refs.wrapper;
+        //     var scrollBox = document.querySelector(".wrapper");
+        //     console.log(scrollBox);
+        //     var top = scrollBox.scrollTop;
+        //     var tt = scrollBox.clientHeight;
+        //     console.log(document.body.scrollTop, tt);
+        // },
         refresh() {
             this.state = 2;
             this.top = 40;
@@ -151,7 +153,7 @@ export default {
     mounted() {
         this.getStories();
         this.toDate = new Date();
-        this.$refs.wrapper.addEventListener("scroll", this.handleScroll, false);
+        // document.addEventListener("scroll", this.handleScroll, true);
     },
     
     // created(){
@@ -207,6 +209,8 @@ export default {
 <style lang="stylus" scoped>
     .box
         margin-top .86rem
+        height: 100%
+        overflow: hidden
     .top-tip
         height: .86rem
         line-height: .86rem
