@@ -1,17 +1,11 @@
 <template>
     <div>
         <HomeHeader :title="title"></HomeHeader>
-        <div class="box" ref="wrapper"
-        @touchstart="handleTouchStart"
-        @touchmove="handleTouchMove"
-        @touchend="handleTouchEnd"
-        @scroll.native="handleScroll">
-            <!-- <div class="bscroll-container"> -->
-                <p class="top-tip" v-show="notesShow">松开刷新</p>
+        <div class="box" ref="wrapper">
+            <div class="bscroll-container">
                 <HomeSwiper :top_stories="top_stories"></HomeSwiper>
                 <HomeNewsList :stories="stories"></HomeNewsList>
-                <div class="load iconfont" @click="loadMore">&#xe69c;</div>
-            <!-- </div> -->
+            </div>
         </div>
     </div>
 </template>
@@ -96,35 +90,35 @@ export default {
             // to.setTime(this.toDate);
             
         },
-        handleTouchStart(e) {
-            this.startY = e.targetTouches[0].pageY;
-            this.touching = true;
-        },
-        handleTouchMove(e) {
-            if (!this.touching) return;
-            let diff = e.targetTouches[0].pageY - this.startY; 
-            if (diff < 0) return;   //下滑不做判断
-            this.top = Math.floor(Math.abs(diff)*0.5) + (this.state === 2 ? 40 : 0);
-            if (this.top >= 40) {
-                this.state = 1;   //代表正在拉取
-            } else {
-                this.state = 0;  // 代表初始转态
-            }
-        },
-        handleTouchEnd(e) {
-            this.touching = false;
-            if (this.state === 2) {
-                this.top = 40;
-                return;
-            }
-            // 判断抬起时的高度，是大于40 就开启刷新
-　　　　　　if (this.top >= 40) {
-　　　　　　　　this.refresh();
-　　　　　　} else {
-　　　　　　　　this.state = 0;
-　　　　　　　　this.top = 0;
-　　　　　　}
-        },
+//         handleTouchStart(e) {
+//             this.startY = e.targetTouches[0].pageY;
+//             this.touching = true;
+//         },
+//         handleTouchMove(e) {
+//             if (!this.touching) return;
+//             let diff = e.targetTouches[0].pageY - this.startY; 
+//             if (diff < 0) return;   //下滑不做判断
+//             this.top = Math.floor(Math.abs(diff)*0.5) + (this.state === 2 ? 40 : 0);
+//             if (this.top >= 40) {
+//                 this.state = 1;   //代表正在拉取
+//             } else {
+//                 this.state = 0;  // 代表初始转态
+//             }
+//         },
+//         handleTouchEnd(e) {
+//             this.touching = false;
+//             if (this.state === 2) {
+//                 this.top = 40;
+//                 return;
+//             }
+//             // 判断抬起时的高度，是大于40 就开启刷新
+// 　　　　　　if (this.top >= 40) {
+// 　　　　　　　　this.refresh();
+// 　　　　　　} else {
+// 　　　　　　　　this.state = 0;
+// 　　　　　　　　this.top = 0;
+// 　　　　　　}
+//         },
         // handleScroll(e) {
         //     // var scrollBox = this.$refs.wrapper;
         //     var scrollBox = document.querySelector(".wrapper");
@@ -153,7 +147,15 @@ export default {
     mounted() {
         this.getStories();
         this.toDate = new Date();
-        // document.addEventListener("scroll", this.handleScroll, true);
+        // this.$nextTick(() => {
+            // if (!this.scroll) {
+                let wrapper = document.querySelector(".box");
+                this.scroll = new BScroll(wrapper, {
+                        click: true,
+                    });
+            // }
+            
+        // });
     },
     
     // created(){
@@ -208,24 +210,12 @@ export default {
 
 <style lang="stylus" scoped>
     .box
-        margin-top .86rem
-        height: 100%
-        overflow: hidden
-    .top-tip
-        height: .86rem
-        line-height: .86rem
-        text-align: center
-        margin: 0 !important
-    .load
-        position: fixed
-        bottom: .2rem
-        right: .2rem
-        font-size: .6rem
-        width: .8rem
-        height: .8rem
-        line-height: .8rem
-        text-align: center
-        border-radius: .8rem
-        color: #ffffff
-        background: rgba(204, 204, 204, .8)
+        position : fiexd 
+        top : .86rem
+        bottom : 0
+        overflow : hidden
+        .bscroll-container
+            height : 100%
+            overflow : hidden
+            
 </style>
