@@ -90,43 +90,6 @@ export default {
             // to.setTime(this.toDate);
             
         },
-//         handleTouchStart(e) {
-//             this.startY = e.targetTouches[0].pageY;
-//             this.touching = true;
-//         },
-//         handleTouchMove(e) {
-//             if (!this.touching) return;
-//             let diff = e.targetTouches[0].pageY - this.startY; 
-//             if (diff < 0) return;   //下滑不做判断
-//             this.top = Math.floor(Math.abs(diff)*0.5) + (this.state === 2 ? 40 : 0);
-//             if (this.top >= 40) {
-//                 this.state = 1;   //代表正在拉取
-//             } else {
-//                 this.state = 0;  // 代表初始转态
-//             }
-//         },
-//         handleTouchEnd(e) {
-//             this.touching = false;
-//             if (this.state === 2) {
-//                 this.top = 40;
-//                 return;
-//             }
-//             // 判断抬起时的高度，是大于40 就开启刷新
-// 　　　　　　if (this.top >= 40) {
-// 　　　　　　　　this.refresh();
-// 　　　　　　} else {
-// 　　　　　　　　this.state = 0;
-// 　　　　　　　　this.top = 0;
-// 　　　　　　}
-//         },
-        // handleScroll(e) {
-        //     // var scrollBox = this.$refs.wrapper;
-        //     var scrollBox = document.querySelector(".wrapper");
-        //     console.log(scrollBox);
-        //     var top = scrollBox.scrollTop;
-        //     var tt = scrollBox.clientHeight;
-        //     console.log(document.body.scrollTop, tt);
-        // },
         refresh() {
             this.state = 2;
             this.top = 40;
@@ -145,18 +108,45 @@ export default {
         },
     },
     mounted() {
+        let wrapper = document.querySelector(".box");
+        this.scroll = new BScroll(wrapper, {
+            click: true,
+            scrollY: true,
+            //下拉刷新
+            pullDownRefresh: {
+                threshold: 50,  //下拉超过30px触发pullingDown事件
+                stop: 30,       //回弹停留在20px
+            },
+            //
+            pullUpLoad: {
+                threshold: -70,  //上拉30px触发pullingUp事件
+                txt: "more",
+            }
+        });
+        this.$nextTick(() => {     
+            this.scroll.on("pullingDown", () => {
+                console.log("pulldown");
+                this.getStories();
+                this.scroll.finishPullDown();  // 事情做完，需要调用此方法告诉 better-scroll 数据已加载，否则下拉事件只会执行一次
+                setTimeout(() => {
+                    this.scroll.refresh();
+                }, 100);
+            });
+            this.scroll.on("pullingUp", () => {
+                console.log("pullup");
+                this.loadMore();
+                this.scroll.finishPullUp();     //需要调用此方法告诉 better-scroll 数据已加载，否则上拉事件只会执行一次
+                setTimeout(() => {
+                    this.scroll.refresh();
+                }, 100);
+            });
+            // this.scroll.refresh();
+        });
+    },
+    created() {
         this.getStories();
         this.toDate = new Date();
-        // this.$nextTick(() => {
-            // if (!this.scroll) {
-                let wrapper = document.querySelector(".box");
-                this.scroll = new BScroll(wrapper, {
-                        click: true,
-                    });
-            // }
-            
-        // });
-    },
+    }
     
     // created(){
     //     const that = this;
@@ -210,12 +200,13 @@ export default {
 
 <style lang="stylus" scoped>
     .box
-        position : fiexd 
+        position : fixed 
         top : .86rem
+        left : 0
+        right : 0
         bottom : 0
         overflow : hidden
         .bscroll-container
-            height : 100%
             overflow : hidden
             
 </style>
