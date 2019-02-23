@@ -3,8 +3,16 @@
         <HomeHeader :title="title"></HomeHeader>
         <div class="box" ref="wrapper">
             <div class="bscroll-container">
-                <HomeSwiper :top_stories="top_stories"></HomeSwiper>
-                <HomeNewsList :stories="stories"></HomeNewsList>
+                <div class="top-tip" v-show="top">
+                    <span class="refresh-hook">下拉刷新</span>
+                </div>
+                <div>
+                    <HomeSwiper :top_stories="top_stories"></HomeSwiper>
+                    <HomeNewsList :stories="stories"></HomeNewsList>
+                </div>
+                <!-- <div class="bottom-tip" v-show="bottom">
+                    <span class="loading-hook">上拉加载</span>
+                </div> -->
             </div>
         </div>
     </div>
@@ -27,14 +35,11 @@ export default {
             top_stories: [],
             stories: [],
             title: "首页",
-            pulldownMsg: "下拉刷新",
-            tartY: 0,
             touching: false,
-            top: 0,
-            state: 0,
-            notesShow: false,
             toDate: null,
-
+            upThreshold: 70,
+            downThreshold: -50,
+            top: false,
         }
     },
     methods: {
@@ -90,47 +95,56 @@ export default {
             // to.setTime(this.toDate);
             
         },
-        refresh() {
-            this.state = 2;
-            this.top = 40;
-            this.getStories();
-            this.state = 0;
-            this.top = 0;
-            this.notesShow = false;
-        }
     },
     watch: {
-        top: function(val) {
-            this.transform = "transform:translateY(" + val + "px)";
-            if (this.top >= 40) {
-                this.notesShow = true;
-            }
-        },
     },
     mounted() {
         let wrapper = document.querySelector(".box");
+        let topTip = document.querySelector(".refresh-hook");
         this.scroll = new BScroll(wrapper, {
             click: true,
             scrollY: true,
+            probeType: 1,
             //下拉刷新
             pullDownRefresh: {
-                threshold: 50,  //下拉超过30px触发pullingDown事件
+                threshold: this.upThreshold,  //下拉超过30px触发pullingDown事件
                 stop: 30,       //回弹停留在20px
             },
             //
             pullUpLoad: {
-                threshold: -70,  //上拉30px触发pullingUp事件
-                txt: "more",
+                threshold: this.downThreshold,  //上拉30px触发pullingUp事件
             }
         });
         this.$nextTick(() => {     
+            this.scroll.on("scroll", (position) => {
+                if (position.y < 5) {
+                    this.top = false;
+                } else {        //大于5显示提示语
+                    this.top = true
+                }
+                if (position.y > this.upThreshold) {        //超过门槛值修改提示语
+                    
+                    topTip.innerText = "释放刷新";
+                }
+            });
+            // this.scroll.on("touchend", (position) => {
+            //     console.log(position);
+            //     if (position.y > this.threshold) {
+            //         this.getStories();      //获取数据
+            //         topTip.innerText = "下拉刷新";
+            //         this.scroll.refresh();
+            //     }
+            // });
             this.scroll.on("pullingDown", () => {
-                console.log("pulldown");
+                console.log("pulldwon")
+                
                 this.getStories();
                 this.scroll.finishPullDown();  // 事情做完，需要调用此方法告诉 better-scroll 数据已加载，否则下拉事件只会执行一次
+                
                 setTimeout(() => {
+                    topTip.innerText = "下拉刷新";      //完成后将提示语改回原值
                     this.scroll.refresh();
-                }, 100);
+                }, 500);
             });
             this.scroll.on("pullingUp", () => {
                 console.log("pullup");
@@ -138,7 +152,7 @@ export default {
                 this.scroll.finishPullUp();     //需要调用此方法告诉 better-scroll 数据已加载，否则上拉事件只会执行一次
                 setTimeout(() => {
                     this.scroll.refresh();
-                }, 100);
+                }, 500);
             });
             // this.scroll.refresh();
         });
@@ -147,54 +161,6 @@ export default {
         this.getStories();
         this.toDate = new Date();
     }
-    
-    // created(){
-    //     const that = this;
-    //     this.$nextTick(() => {
-    //         if (!this.scroll) {
-    //             this.scroll = new BScroll(this.$refs.wrapper,{       //初始化better-scroll
-    //                 probeType:1,   //1 滚动的时候会派发scroll事件，会截流。2滚动的时候实时派发scroll事件，不会截流。 3除了实时派发scroll事件，在swipe的情况下仍然能实时派发scroll事件
-    //                 click: true,   //是否派发click事件
-    //                 scrollY: true
-    //             });
-    //         } else {
-    //             this.scroll.refresh();
-    //         }
-            
-    //         // 滑动过程中事件
-    //         this.scroll.on('scroll', (pos) => {
-    //             console.log(that.scroll);
-    //             if (pos.y > 30) {
-    //                 this.pulldownMsg = '释放立即刷新';
-    //             }
-    //         });
-    //         //滑动结束松开事件
-    //         this.scroll.on('touchEnd',(pos) =>{  //上拉刷新
-    //         console.log(pos);
-    //             if(pos.y > 30){
-    //                 setTimeout(()=>{
-    //                     that.getStories().then((res)=>{
-    //                         //恢复刷新提示文本值
-    //                         that.pulldownMsg = '下拉刷新'
-    //                         //刷新列表后，重新计算滚动区域高度
-    //                         that.scroll.refresh();
-    //                     })
-    //                 },2000);
-    //             } 
-    //             else if(pos.y<(this.scroll.maxScrollY - 30)){   //下拉加载
-    //                 this.pullupMsg = '加载中。。。';
-    //                 setTimeout(()=>{
-    //                     that.getStories().then((res)=>{
-    //                         //恢复文本值
-    //                         that.pullupMsg = '加载更多';
-    //                         that.scroll.refresh();
-    //                     });
-    //                 },2000);
-                    
-    //             }
-    //         });     
-    //     });
-    // }
 }
 </script>
 
@@ -208,5 +174,7 @@ export default {
         overflow : hidden
         .bscroll-container
             overflow : hidden
+            .top-tip
+                text-align : center
             
 </style>
