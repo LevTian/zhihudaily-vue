@@ -35,11 +35,15 @@ export default {
             top_stories: [],
             stories: [],
             title: "首页",
+            defaultTitle: "首页",
             touching: false,
             toDate: null,
             upThreshold: 70,
-            downThreshold: -50,
+            downThreshold: -45,
             top: false,
+            viewHight: 0,
+            titleList: [],
+            timer: null,
         }
     },
     methods: {
@@ -95,12 +99,23 @@ export default {
             // to.setTime(this.toDate);
             
         },
+        arriveTop(el) {
+            el.forEach((element, index) => {
+                let bound = element.getBoundingClientRect();    //元素大小及位置
+                if ((bound.top > 43) && 0 === index) {
+                    this.title = this.defaultTitle;
+                } else if (bound.top <= 43) {
+                    this.title = element.innerText;
+                }
+            });
+        }
     },
     watch: {
     },
     mounted() {
         let wrapper = document.querySelector(".box");
         let topTip = document.querySelector(".refresh-hook");
+        this.viewHight = document.documentElement.clientHeight;
         this.scroll = new BScroll(wrapper, {
             click: true,
             scrollY: true,
@@ -126,6 +141,20 @@ export default {
                     
                     topTip.innerText = "释放刷新";
                 }
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                }
+                this.timer = setTimeout(() => {
+                    this.arriveTop(this.titleList);
+                }, 7);
+                // if (!this.timer) {
+                //     this.timer = setTimeout(() => {
+                //         this.arriveTop(this.titleList);
+                //     }, 16);
+                // }
+                // this.arriveTop(this.titleList);
+                
+                
             });
             // this.scroll.on("touchend", (position) => {
             //     console.log(position);
@@ -136,18 +165,14 @@ export default {
             //     }
             // });
             this.scroll.on("pullingDown", () => {
-                console.log("pulldwon")
-                
                 this.getStories();
                 this.scroll.finishPullDown();  // 事情做完，需要调用此方法告诉 better-scroll 数据已加载，否则下拉事件只会执行一次
-                
                 setTimeout(() => {
                     topTip.innerText = "下拉刷新";      //完成后将提示语改回原值
                     this.scroll.refresh();
                 }, 500);
             });
             this.scroll.on("pullingUp", () => {
-                console.log("pullup");
                 this.loadMore();
                 this.scroll.finishPullUp();     //需要调用此方法告诉 better-scroll 数据已加载，否则上拉事件只会执行一次
                 setTimeout(() => {
@@ -160,6 +185,24 @@ export default {
     created() {
         this.getStories();
         this.toDate = new Date();
+    },
+    updated() {
+        this.$nextTick(() => {
+            this.titleList = document.querySelectorAll(".list-title");
+            // const clientHeight = window.innerHeight;
+        });
+    }, 
+    beforeRouteLeave(to, from, next) {
+        this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        console.log(this.scrollTop);
+        next();
+    },
+    beforeRouteEnter(to, from, next) {
+        
+        next(vm => {
+            document.body.scrollTop = vm.scrollTop;
+            console.log(vm, vm.scrollTop);
+        });
     }
 }
 </script>

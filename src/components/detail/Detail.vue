@@ -67,6 +67,9 @@ export default {
         this.id = this.$route.params.id;
         this.getNew();
         this.getNewExtra();
+        
+    },
+    updated() {
     }
     
 }

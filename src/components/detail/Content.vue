@@ -9,7 +9,8 @@ export default {
         body: String,
     },
     mounted() {
-    }
+    },
+    
 }
 </script>
 
